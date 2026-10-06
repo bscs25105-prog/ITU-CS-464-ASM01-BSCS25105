@@ -61,6 +61,17 @@
 
 **Aesthetic profile:** Challenge leads (M1 to M5): every round can eliminate you. Expression (M6) lets players show personality through skins, and Fellowship (M7) makes the chaos more fun with friends.
 
+
+
+## Level blockouts
+
+| Level | Screenshot | Its idea | Wayfinding tool |
+|---|---|---|---|
+| Level01 | <img src="Docs/levels/level01.png" width="320"> | A basic straight road with a train in the lane: the core run from spawn to goal. | Leading lines: the road's lane lines point the player toward the goal. |
+| Level02 | <img src="Docs/levels/level02.png" width="320"> | Trains placed far down the road, with buildings and trees added on both sides to build an environment. | Framing: the buildings and trees on both sides frame the road ahead. |
+| Level03 | <img src="Docs/levels/level03.png" width="320"> | Obstacle gates across the lanes, and a slope on a train that the player has to climb. | Landmark: the coloured gates stand out and can be seen from far away. |
+| Level04 | <img src="Docs/levels/level04.png" width="320"> | Bushes placed along and inside the lanes, which narrow the path. | Pinch and release: the bushes squeeze the path, then it opens up again. |
+
 **Player types**
 - Primary: Achiever (acting × world), because M1, M3, M4 and M5 push the player to clear courses and survive rounds on the game's own terms: the player acts on the game's system to qualify and win, rather than just exploring how it works.
 - Secondary: Killer (acting × players), because M2 lets players shove and dive at each other, so one player's progress can cost another player a qualifying spot.
