@@ -22,9 +22,11 @@ public class PlayerController : MonoBehaviour
     float airTime;
     Coroutine squashRoutine;
     Vector3 lastGroundPoint, lastGroundNormal;
+    Transform cam;
 
     void Awake()
     {
+        cam = Camera.main.transform;
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         rb.sleepThreshold = 0f;
@@ -35,7 +37,16 @@ public class PlayerController : MonoBehaviour
     {
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
-        move = Vector3.ClampMagnitude(new Vector3(h, 0f, v), 1f);
+        Vector3 forward = cam.forward;
+        forward.y = 0f;
+        forward.Normalize();
+        Vector3 right = cam.right;
+        right.y = 0f;
+        right.Normalize();
+
+        move = Vector3.ClampMagnitude(forward * v + right * h, 1f);
+        Debug.Log("cam=" + cam.name + "  fwd=" + forward + "  move=" + move);   // <-- ye nayi line
+
 
         if (isGrounded && !jumpQueued && rb.linearVelocity.y <= 0f)
             lastGroundedTime = Time.time;
