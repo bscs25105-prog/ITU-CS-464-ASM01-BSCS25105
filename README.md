@@ -75,3 +75,47 @@
 **Player types**
 - Primary: Achiever (acting × world), because M1, M3, M4 and M5 push the player to clear courses and survive rounds on the game's own terms: the player acts on the game's system to qualify and win, rather than just exploring how it works.
 - Secondary: Killer (acting × players), because M2 lets players shove and dive at each other, so one player's progress can cost another player a qualifying spot.
+- 
+  ## CS464 Assignment 02 · Sabahat Hamza · BSCS25105
+
+- **Video 1:** https://drive.google.com/file/d/1HFySYeTooJcLiMvwGblYKsLDm4k8OO1P/view?usp=sharing
+-  **Video 2:**https://drive.google.com/file/d/1eTEf29CsB-Ot1PfshQ89q5cfWeGxWNPH/view?usp=sharing
+- **Input:** Legacy Input (`Input.GetAxis` and `Input.GetKeyDown`), with Active Input Handling set to Both.
+- **Ground check:** Contact normal. `OnCollisionStay` only counts a contact if `normal.y > 0.5`, so walls don't count as ground. The gizmo draws a green ray and a small ring at the contact point, and a red circle around the player when he is in the air.
+- **Camera:** Exact smoothing, `blend = 1 - e^(-k * dt)`, in `LateUpdate`, with look-ahead from the player's velocity.
+- **Juice:** Squash on landing, shaped by `OutBack`. It starts when the player lands after more than 0.1 s in the air.
+
+I only made four levels (Level01 to Level04). Level05 was optional, so I skipped it.
+
+## Tuning
+
+| Setting | Value | Why this number |
+|---|---|---|
+| Speed | 5 m/s | A brisk run for a 2 m tall capsule. At this speed one jump carries about 5 m , and the camera only trails by about 1 m. |
+| Jump height | 1.8 m | Just under the player's own height (2 m) so he can climb ledges up to about 1.7 m. |
+| Time to apex | 0.61 s | I don't type this in, it follows from the jump height: v / g = 5.94 / 9.81. |
+| Fall multiplier | 2.2x | The rise stays 0.61 s but the fall takes 0.41 s, so the jump feels snappy and not floaty. |
+| Coyote time | 0.1 s | At 5 m/s that is 0.5 m past the edge. A slightly late press still jumps, but it can't feel like a mid-air jump. |
+| Jump buffer | 0.12 s | I land at about 8.8 m/s, so a press up to 0.12 s early is made at about 0.9 m above the ground at most. |
+| Camera smoothing | sharpness 5 | The camera moves by speed / k = 5 / 5 = 1 m at full speed. That is smooth, but I never lose the player. |
+| Look-ahead | 0.35 s | 5 m/s x 0.35 s = 1.75 m ahead of the player, so I see more of the road in front of me. |
+
+## Four answers
+
+1. **The jump, in numbers.** The launch speed is v = sqrt(2 * g * h) = sqrt(2 * 9.81 * 1.8) = 5.94 m/s. The Rigidbody mass is 1 kg, so the jumpForce is m * v = 5.94. The time to the apex is v / g = 0.61 s. Falling uses extra gravity, 2.2 * 9.81 = 21.6 m/s², so the fall takes sqrt(2h / a) = sqrt(3.6 / 21.6) = 0.41 s. The whole jump is about 1.02 s in the air, and at 5 m/s that carries me about 5.1 m on flat ground. My levels are a road with trains, buses, ramps and bushes, so there is no big gap to cross. Even so, a 3 m gap  would be cleared with about 2 m to spare.
+
+2. **Update and FixedUpdate.** In `Update` I read the keys (`GetAxis`, `GetKeyDown`), build `move` from the camera's forward and right, keep the two timestamps for coyote time and the jump buffer, queue the jump, and watch for a landing to start the squash. In `FixedUpdate` I set `rb.linearVelocity` from `move` (keeping y), apply the queued jump once (after zeroing the vertical velocity), add the extra fall gravity, and reset `isGrounded` (it is set again by `OnCollisionStay`). If I swapped them, `GetKeyDown` inside `FixedUpdate` would miss jumps, because it is true for one frame only and at 144 fps about two frames in three have no `FixedUpdate`. And setting velocity or adding forces in `Update` would make the physics depend on the frame rate.
+
+3. **Vector3.Dot.** In the ground check, `if (c.normal.y > 0.5f)` is the same as `Vector3.Dot(c.normal, Vector3.up) > 0.5f`, because `Vector3.up` is (0, 1, 0). A positive result means the surface faces up (floor or ramp). A negative result means it faces down (a ceiling). A result near zero means a vertical wall. I use 0.5, so slopes up to 60° count as ground.
+
+4. **The juice.** It is a squash on landing, using the `OutBack` curve. The body goes from y = 0.7 back to 1 and overshoots a little, which gives a springy bounce. x and z are 1 / sqrt(y) (about 1.2 at y = 0.7), so the volume stays the same. It lasts 0.25 s, which is 15 frames at 60 fps. Shorter and you can't see it, longer and it is still playing when I jump again. It only starts after more than 0.1 s in the air, so walking over small bumps doesn't trigger it, and it only scales the Body child so the collider keeps its size.
+
+## Levels
+
+| Level | What the controller must do there | What I changed for this jump |
+|---|---|---|
+| Level01 | Run along the basic road from the spawn to the goal and try a jump. | Scaled the level down (0.001) so the road is about 11 m wide for a 2 m player. |
+| Level02 | Run down the road between the trees and buildings. | Same scale change. |
+| Level03 | Jump over the obstacles and go up the ramp onto the train. | Same scale change. Added colliders to the train and a Mesh Collider to the ramp so I can climb it. |
+| Level04 | Run the road with the bushes and jump over them. | Same scale change. |
+| Level05 | Optional, I didn't make it. | |
