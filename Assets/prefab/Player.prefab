@@ -99,6 +99,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   speed: 5
   jumpHeight: 1.8
+  coyoteTime: 0.1
+  jumpBuffer: 0.12
+  fallMultiplier: 2.2
+  squashDuration: 0.25
+  body: {fileID: 0}
 --- !u!1 &3770390909830922844
 GameObject:
   m_ObjectHideFlags: 0
@@ -165,7 +170,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 1c7cb74b8058f14469f1ea26c87166d8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
